@@ -3,4 +3,17 @@ name = "rssreader"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "aiohttp>=3.13.3",
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "dotenv>=0.9.9",
+    "psycopg2>=2.9.11",
+    "pydantic>=2.12.5",
+    "python-dateutil>=2.9.0.post0",
+    "rss-parser",
+    "sqlalchemy>=2.0.46",
+]
+
+[tool.uv.sources]
+rss-parser = { url = "https://github.com/dhvcc/rss-parser/archive/refs/tags/v3.0.0.zip" }
