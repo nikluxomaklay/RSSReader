@@ -10,7 +10,6 @@ from helpers import load_env
 
 class Config(BaseModel):
     CHECK_INTERVAL: int
-    RSS_SOURCES: List[str]
     DEBUG: bool
     DB: DBConfig
 
@@ -40,7 +39,6 @@ def init_config() -> Config:
 
     config = Config(
         CHECK_INTERVAL=os.getenv('RSS_CHECK_INTERVAL', 60),
-        RSS_SOURCES=['https://www.cnews.ru/inc/rss/news.xml'],
         DEBUG=bool(os.getenv('DEBUG', 'False')),
         DB=DBConfig(
             NAME=os.getenv('RSS_DB_NAME', 'rss'),
