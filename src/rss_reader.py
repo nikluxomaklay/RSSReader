@@ -25,6 +25,8 @@ class RSSReader:
         read_tasks = []
 
         while True:
+            read_tasks.clear()
+
             async with self.session_factory() as session:
                 for feed in await RSSRepository(session).get_active_feeds():
                     read_tasks.append(
@@ -36,8 +38,6 @@ class RSSReader:
             for item_cnt, source in read_results:
                 if item_cnt:
                     print(f'Read {item_cnt} new items from {source}')
-
-            read_tasks.clear()
 
             await asyncio.sleep(self.config.CHECK_INTERVAL)
 
