@@ -9,6 +9,7 @@ from db.repositories.rss import RSSRepository
 from helpers import io_get
 from services.rss.schemas import FeedDTO
 from services.rss.schemas import ItemDTO
+from services.rss.xml import FixedImageRSS
 
 
 class RSSReader:
@@ -43,7 +44,7 @@ class RSSReader:
 
     async def read_rss(self, feed: FeedDTO):
         xml = await io_get(feed.link)
-        rss = RSSParser.parse(xml)
+        rss = RSSParser.parse(xml, schema=FixedImageRSS)
         new_items_cnt = await self.process_result(rss, feed)
         return new_items_cnt, feed
 
