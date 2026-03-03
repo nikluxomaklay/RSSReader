@@ -44,9 +44,12 @@ class RSSReader:
 
     async def read_rss(self, feed: FeedDTO):
         xml = await io_get(feed.link)
-        rss = RSSParser.parse(xml, schema=FixedImageRSS)
-        new_items_cnt = await self.process_result(rss, feed)
-        return new_items_cnt, feed
+        if xml:
+            rss = RSSParser.parse(xml, schema=FixedImageRSS)
+            new_items_cnt = await self.process_result(rss, feed)
+            return new_items_cnt, feed
+        else:
+            return 0, feed
 
     async def process_result(self, result, feed):
         new_items_cnt = 0
