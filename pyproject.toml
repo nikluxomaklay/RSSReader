@@ -17,3 +17,9 @@ dependencies = [
 
 [tool.uv.sources]
 rss-parser = { url = "https://github.com/dhvcc/rss-parser/archive/refs/tags/v3.0.0.zip" }
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.0",
+    "pytest-asyncio>=1.4.0",
+]
