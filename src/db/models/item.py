@@ -26,12 +26,10 @@ class Item(Base):
     title: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
-        unique=True,
     )
     link: Mapped[str] = mapped_column(
         String(2000),
         nullable=False,
-        unique=True,
     )
     description: Mapped[str] = mapped_column(
         String(500),

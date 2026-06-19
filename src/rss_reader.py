@@ -20,7 +20,7 @@ class RSSReader:
         session_factory: async_sessionmaker,
     ):
         self.config = config
-        self.session_factory = session_factory
+        self.rss_repo = RSSRepository(session_factory)
 
     async def run(self, *args, **kwargs):
         read_tasks = []
@@ -28,11 +28,10 @@ class RSSReader:
         while True:
             read_tasks.clear()
 
-            async with self.session_factory() as session:
-                for feed in await RSSRepository(session).get_active_feeds():
-                    read_tasks.append(
-                        asyncio.create_task(self.read_rss(feed)),
-                    )
+            for feed in await self.rss_repo.get_active_feeds():
+                read_tasks.append(
+                    asyncio.create_task(self.read_rss(feed)),
+                )
 
             read_results = await asyncio.gather(*read_tasks)
 
@@ -52,23 +51,20 @@ class RSSReader:
             return 0, feed
 
     async def process_result(self, result, feed):
-        new_items_cnt = 0
-        async with self.session_factory() as session:
-            repo = RSSRepository(session)
-            items = []
-            for item in result.channel.items:
-                item_dto = ItemDTO(
-                    title=item.title.content,
-                    link=item.links[0].content,
-                    description=item.description.content[:500],
-                    guid=item.guid.content,
-                    pubDate=parse(item.pub_date.content),
-                )
-                items.append(item_dto)
+        items = []
+        for item in result.channel.items:
+            item_dto = ItemDTO(
+                title=item.title.content,
+                link=item.links[0].content,
+                description=(
+                    item.description.content[:500]
+                    if item.description.content else ''
+                ),
+                guid=item.guid.content,
+                pubDate=parse(item.pub_date.content),
+            )
+            items.append(item_dto)
 
-            result = await repo.insert_items(feed, items)
-            new_items_cnt += result.rowcount
-
-            await session.commit()
+        new_items_cnt = await self.rss_repo.insert_items(feed, items)
 
         return new_items_cnt
